@@ -1,6 +1,53 @@
 const PromotionEngine = require('./')
 
 describe('PromotionEngine', () => {
+  describe('when promotion has percent discount', () => {
+    it('should calculate total by percentage', () => {
+      const invoice = {
+        id: 1,
+        lines: [
+          {
+            item: 'Apple',
+            category: 'Fruit',
+            qty: 10,
+            price: 10
+          },
+        ]
+      }
+      const promotions = [
+        {
+          name: 'Apply to apple by percent',
+          condition: () => true,
+          promote: (toBePromoteInvoice) => {
+            toBePromoteInvoice.lines.push({
+              item: 'Apple discount',
+              category: 'Promotion',
+              type: 'percentage',
+              qty: 10, // Apple quantity
+              price: 10, // Apple price
+              percent: 20
+            })
+          }
+        },
+      ]
+      const promotionEngine = new PromotionEngine(promotions)
+
+      promotionEngine.applyPromotions(invoice)
+
+      expect(invoice.lines).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            item: 'Apple discount',
+            category: 'Promotion',
+            type: 'percentage',
+            qty: 10, // Apple quantity
+            price: 10, // Apple price
+            percent: 20
+          })
+        ])
+      )
+    })
+  })
   describe('when promotion apply to a specific item', () => {
     describe('and specific item exists in the invoice', () => {
       test('it should add promotion item to invoice', () => {

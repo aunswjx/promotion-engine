@@ -1,4 +1,13 @@
 function PromotionEngine(promotions = []) {
+  function calculateSubtotal(item) {
+    const { type = 'fixed' } = item
+
+    switch (type) {
+      case 'percentage': return (item.qty * item.price) * item.percent / 100 * -1
+      case 'fixed':
+        default: return item.qty * item.price
+    }
+  }
   return {
     applyPromotions(invoice) {
       matchedPromotions = promotions.filter(promotion => promotion.condition(invoice))
@@ -13,9 +22,8 @@ function PromotionEngine(promotions = []) {
       let optimizedInvoice = invoice
 
       appliedPromotionInvoices.forEach(appliedPromotionInvoice => {
-        // TODO: Calculate the right subtotal for each line (support percentage)
-        const invoiceTotal = appliedPromotionInvoice.lines.map(item => item.qty * item.price).reduce((curr, prev) => curr + prev, 0)
-        const optimizedInvoiceTotal = optimizedInvoice.lines.map(item => item.qty * item.price).reduce((curr, prev) => curr + prev, 0)
+        const invoiceTotal = appliedPromotionInvoice.lines.map(calculateSubtotal).reduce((curr, prev) => curr + prev, 0)
+        const optimizedInvoiceTotal = optimizedInvoice.lines.map(calculateSubtotal).reduce((curr, prev) => curr + prev, 0)
 
         // TODO: Check if invoices can be combined
         if (optimizedInvoiceTotal > invoiceTotal) {
