@@ -1,0 +1,10 @@
+{
+  "name": "promotion-engine",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Suwijak Chaipipat <ppnk2537@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.5.0"
+  }
+}
