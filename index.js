@@ -10,6 +10,8 @@ function PromotionEngine(promotions = []) {
   }
   return {
     applyPromotions(invoice) {
+      // Q: One promotion can be active for any given instance of product then how about the category?
+      // Assumption: All condition check will be mutually exclusive for all the promotions applied to the engine.
       matchedPromotions = promotions.filter(promotion => promotion.condition(invoice))
 
       appliedPromotionInvoices = matchedPromotions.map(promotion => {
@@ -25,13 +27,11 @@ function PromotionEngine(promotions = []) {
         const invoiceTotal = appliedPromotionInvoice.lines.map(calculateSubtotal).reduce((curr, prev) => curr + prev, 0)
         const optimizedInvoiceTotal = optimizedInvoice.lines.map(calculateSubtotal).reduce((curr, prev) => curr + prev, 0)
 
-        // TODO: Check if invoices can be combined
         if (optimizedInvoiceTotal > invoiceTotal) {
           optimizedInvoice = invoice
         }
       })
 
-      // TODO: Promote all promotions
       optimizedInvoice.promote && optimizedInvoice.promote(invoice)
     }
   }
